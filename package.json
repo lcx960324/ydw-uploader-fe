@@ -11,6 +11,7 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
+    "iview": "^2.0.0-rc.18",
     "less": "^2.7.2",
     "less-loader": "^4.0.4",
     "vue": "^2.3.3",
