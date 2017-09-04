@@ -13,13 +13,18 @@
       </div>
     </div>
     <div class="file-list">
-      <Table
-        :columns="cols"
-        :data="data"
-        :show-header="false"
-        border
-      >
-      </Table>
+      <div class="file-list-head"></div>
+      <div class="file-list-content">
+        <Table
+          :columns="cols"
+          :data="data"
+          :show-header="false"
+          border
+          stripe
+        >
+        </Table>
+      </div>
+      <div class="file-list-bottom"></div>
     </div>
   </div>
 </template>
@@ -57,7 +62,16 @@ export default {
           width: 120,
           align: 'center',
           render (_, { row }) {
-            if (row.size > 1000) return (row.size / 1000) + ' KB'
+            if (row.type === 'file') {
+              const size = row.size
+              if (size < 1024) return parseFloat(size).toFixed(2) + ' B'
+              if (size < 1024 * 1024) return parseFloat(size / 1024).toFixed(2) + ' KB'
+              if (size < 1024 * 1024 * 1024) return parseFloat(size / 1024 / 1024).toFixed(2) + ' MB'
+              if (size < 1024 * 1024 * 1024 * 1024) return parseFloat(size / 1024 / 1024 / 1024).toFixed(2) + ' GB'
+              return parseFloat(size / 1024 / 1024 / 1024 / 1024).toFixed(2) + ' TB'
+            } else {
+              return '-'
+            }
           }
         },
         {
@@ -71,12 +85,12 @@ export default {
                 props: {
                   type: 'ghost'
                 }
-              }, '删除'),
+              }, '复制链接'),
               h('Button', {
                 props: {
                   type: 'ghost'
                 }
-              }, '复制链接')
+              }, '删除')
             ])
           }
         }
@@ -90,13 +104,13 @@ export default {
         },
         {
           type: 'file',
-          name: 'test',
+          name: 'test2',
           size: '12345',
           operation: '操作'
         },
         {
-          type: 'file',
-          name: 'test',
+          type: 'folder',
+          name: 'test3',
           size: '12345',
           operation: '操作'
         }
@@ -121,7 +135,12 @@ export default {
   }
   .file-list {
     margin-top: 20px;
+    background: #fff;
     border-radius: 4px;
+    padding: 1px; // Aviod margin collapse
+    &-content {
+      margin: 4px;
+    }
   }
 }
 </style>
