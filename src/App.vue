@@ -19,5 +19,6 @@ html {
 body {
   height: 100%;
   background: linear-gradient(to bottom, @bg-start, @bg-end);
+  padding-top: 1px;
 }
 </style>
