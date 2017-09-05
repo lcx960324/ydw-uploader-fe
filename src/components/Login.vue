@@ -6,20 +6,35 @@
     <div class="upl-login-form">
       <Form>
         <Form-item label="用户名">
-          <Input type="text"></Input>
+          <Input v-model="username" type="text"></Input>
         </Form-item>
         <Form-item label="密码">
-          <Input type="password"></Input>
+          <Input v-model="password" type="password"></Input>
         </Form-item>
       </Form>
-      <Button class="upl-login-form-button" type="success" long>登录</Button>
+      <Button @click="login" class="upl-login-form-button" type="success" long>登录</Button>
     </div>
   </div>
 </template>
 
 <script>
+import { login } from '@/APIs/user'
 export default {
-
+  data () {
+    return {
+      username: '',
+      password: ''
+    }
+  },
+  methods: {
+    login () {
+      login(this.username, this.password).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+  }
 }
 </script>
 
