@@ -29,9 +29,17 @@ export default {
   methods: {
     login () {
       login(this.username, this.password).then(res => {
-        console.log(res)
+        if (res.data.error === 0) {
+          this.$router.push({
+            path: '/explorer',
+            query: {
+              path: '/'
+            }
+          })
+        } else this.$Message.error('登录失败：密码错误')
       }).catch(err => {
         console.log(err)
+        this.$Message.error('登录失败：内部错误')
       })
     }
   }

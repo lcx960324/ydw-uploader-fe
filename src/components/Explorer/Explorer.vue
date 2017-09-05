@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { getFileList } from '@/APIs/explorer'
 export default {
   data () {
     return {
@@ -95,27 +96,20 @@ export default {
           }
         }
       ],
-      data: [
-        {
-          type: 'file',
-          name: 'test',
-          size: '12345',
-          operation: '操作'
-        },
-        {
-          type: 'file',
-          name: 'test2',
-          size: '12345',
-          operation: '操作'
-        },
-        {
-          type: 'folder',
-          name: 'test3',
-          size: '12345',
-          operation: '操作'
-        }
-      ]
+      data: []
     }
+  },
+  created () {
+    getFileList('/').then(res => {
+      console.log(res)
+      this.data = res.data.map(file => {
+        return {
+          type: file.isDir === 1 ? 'folder' : 'file',
+          name: file.fname,
+          size: 0
+        }
+      })
+    })
   }
 }
 </script>
