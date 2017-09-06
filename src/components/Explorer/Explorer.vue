@@ -26,14 +26,24 @@
       </div>
       <div class="file-list-bottom"></div>
     </div>
+    <Modal
+      v-model="uploader"
+      title="上传文件"
+      class="uploader-modal">
+      <span slot="footer"></span>
+      <Uploader></Uploader>
+    </Modal>
   </div>
 </template>
 
 <script>
+import Uploader from '@/components/Explorer/Uploader'
 import { getFileList } from '@/APIs/explorer'
 export default {
+  components: { Uploader },
   data () {
     return {
+      uploader: true,
       cols: [
         {
           key: 'type',
@@ -56,7 +66,12 @@ export default {
           }
         },
         {
-          key: 'name'
+          key: 'name',
+          align: 'center',
+          render (h, { row }) {
+            if (row.type !== 'folder') return row.name
+            else return h('a', {}, row.name)
+          }
         },
         {
           key: 'size',
@@ -84,7 +99,8 @@ export default {
             }, [
               h('Button', {
                 props: {
-                  type: 'ghost'
+                  type: 'ghost',
+                  disabled: params.row.type !== 'file'
                 }
               }, '复制链接'),
               h('Button', {
@@ -115,6 +131,12 @@ export default {
 </script>
 
 <style lang="less">
+.uploader-modal {
+  .ivu-modal-footer {
+    padding: 0 0 10px 0;
+    border-top: unset;
+  }
+}
 .explorer {
   .control-panel {
     &-button {
