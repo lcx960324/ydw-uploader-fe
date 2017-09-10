@@ -39,7 +39,7 @@ export const deleteFile = function (currentPath, fname) {
 }
 export const upload = function (currentPath, file) {
   const data = new FormData()
-  data.append('currentPath', currentPath)
+  data.append('current_path', currentPath)
   data.append('file', file)
   return ajax.post('/upload.do', data)
 }
