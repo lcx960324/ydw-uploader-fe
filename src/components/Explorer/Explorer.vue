@@ -4,8 +4,8 @@
       <div class="control-panel-button">
         <ButtonGroup>
           <Button icon="arrow-return-left">后退</Button>
-          <Button icon="folder">新建文件夹</Button>
-          <Button icon="upload">上传文件</Button>
+          <Button icon="folder" @click="create">新建文件夹</Button>
+          <Button icon="upload" @click="upload">上传文件</Button>
         </ButtonGroup>
       </div>
       <div class="control-panel-input">
@@ -33,17 +33,27 @@
       <span slot="footer"></span>
       <Uploader></Uploader>
     </Modal>
+    <Modal
+      v-model="creator"
+      title="新建文件夹"
+      class="creator-modal"
+      @on-cacel="cleanFolderName"
+      @on-ok="createFolder">
+      <Input v-model="folderName"></Input>
+    </Modal>
   </div>
 </template>
 
 <script>
 import Uploader from '@/components/Explorer/Uploader'
-import { getFileList } from '@/APIs/explorer'
+import { getFileList, createDir } from '@/APIs/explorer'
 export default {
   components: { Uploader },
   data () {
     return {
-      uploader: true,
+      uploader: false,
+      creator: false,
+      folderName: '',
       cols: [
         {
           key: 'type',
@@ -126,6 +136,24 @@ export default {
         }
       })
     })
+  },
+  methods: {
+    upload () {
+      this.uploader = true
+    },
+    create () {
+      this.creator = true
+    },
+    cleanFolderName () {
+      this.folderName = ''
+    },
+    createFolder () {
+      createDir('/', this.folderName).then(res => {
+        console.log(res)
+      })
+      this.cleanFolderName()
+    }
+
   }
 }
 </script>

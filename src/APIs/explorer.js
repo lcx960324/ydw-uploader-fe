@@ -8,7 +8,7 @@ const ajax = axios.create({
 export const createDir = function (currentPath, name) {
   return ajax.get('/createDIR.do', {
     params: {
-      currentPath,
+      current_path: currentPath,
       name
     }
   })
