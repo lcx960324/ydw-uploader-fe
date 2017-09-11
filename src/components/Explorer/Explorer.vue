@@ -78,9 +78,21 @@ export default {
         {
           key: 'name',
           align: 'center',
-          render (h, { row }) {
+          render: (h, { row }) => {
             if (row.type !== 'folder') return row.name
-            else return h('a', {}, row.name)
+            else {
+              return h('a', {
+                on: {
+                  click: event => {
+                    event.stopPropagation()
+                    event.preventDefault()
+                    const path = row.path + row.fname
+                    this.$route.query.path = path
+                    this.gotoPath(path)
+                  }
+                }
+              }, row.name)
+            }
           }
         },
         {
@@ -126,16 +138,11 @@ export default {
     }
   },
   created () {
-    getFileList('/').then(res => {
-      console.log(res)
-      this.data = res.data.map(file => {
-        return {
-          type: file.isDir === 1 ? 'folder' : 'file',
-          name: file.fname,
-          size: 0
-        }
-      })
+    this.$Loading.config({
+      color: '#19be6b',
+      height: 2
     })
+    this.gotoPath(this.$route.query.path)
   },
   methods: {
     upload () {
@@ -148,12 +155,28 @@ export default {
       this.folderName = ''
     },
     createFolder () {
-      createDir('/', this.folderName).then(res => {
+      createDir(this.$route.query.path, this.folderName).then(res => {
         console.log(res)
       })
       this.cleanFolderName()
+    },
+    gotoPath (path) {
+      this.$Loading.start()
+      getFileList(path).then(res => {
+        this.$Loading.finish()
+        this.data = res.data.map(file => {
+          return {
+            type: file.isDir === 1 ? 'folder' : 'file',
+            name: file.fname,
+            size: 0
+          }
+        })
+      }).catch(err => {
+        console.log(err)
+        this.$Loading.error()
+        this.$Message.error('加载文件夹信息失败，请刷新页面。')
+      })
     }
-
   }
 }
 </script>

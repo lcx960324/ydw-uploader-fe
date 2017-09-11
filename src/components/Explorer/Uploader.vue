@@ -1,7 +1,6 @@
 <template>
   <div class="uploader">
     <Upload multiple type="drag" action="http://httppost.cn:8080/user/upload.do"
-    :data="{current_path: '/'}"
     :before-upload="handleUpload"
     name="file"
     with-credentials>
@@ -18,7 +17,7 @@ import { upload } from '@/APIs/explorer'
 export default {
   methods: {
     handleUpload (file) {
-      upload('/', file).then(res => {
+      upload(this.$route.query.path, file).then(res => {
         console.log(res)
       })
       return false
