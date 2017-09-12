@@ -46,7 +46,7 @@
 
 <script>
 import Uploader from '@/components/Explorer/Uploader'
-import { getFileList, createDir } from '@/APIs/explorer'
+import { getFileList, createDir, deleteFile } from '@/APIs/explorer'
 export default {
   components: { Uploader },
   data () {
@@ -86,9 +86,13 @@ export default {
                   click: event => {
                     event.stopPropagation()
                     event.preventDefault()
-                    const path = row.path + row.fname
-                    this.$route.query.path = path
-                    this.gotoPath(path)
+                    console.log(row)
+                    this.$router.push({
+                      path: '/explorer',
+                      query: {
+                        path: row.path
+                      }
+                    })
                   }
                 }
               }, row.name)
@@ -116,7 +120,7 @@ export default {
           key: 'operation',
           width: 180,
           align: 'center',
-          render (h, params) {
+          render: (h, params) => {
             return h('ButtonGroup', {
             }, [
               h('Button', {
@@ -128,6 +132,13 @@ export default {
               h('Button', {
                 props: {
                   type: 'ghost'
+                },
+                on: {
+                  click: event => {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    this.delete(params.row.name)
+                  }
                 }
               }, '删除')
             ])
@@ -135,6 +146,11 @@ export default {
         }
       ],
       data: []
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      this.gotoPath(this.$route.query.path)
     }
   },
   created () {
@@ -160,6 +176,11 @@ export default {
       })
       this.cleanFolderName()
     },
+    delete (file) {
+      deleteFile(this.$route.query.path, file).then(res => {
+        console.log(res)
+      })
+    },
     gotoPath (path) {
       this.$Loading.start()
       getFileList(path).then(res => {
@@ -168,6 +189,7 @@ export default {
           return {
             type: file.isDir === 1 ? 'folder' : 'file',
             name: file.fname,
+            path: file.path + file.fname + '/',
             size: 0
           }
         })
