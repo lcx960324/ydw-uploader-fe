@@ -21,18 +21,10 @@ export const getFileList = function (currentPath, dirName) {
     }
   })
 }
-export const deleteDir = function (currentPath, dName) {
-  return ajax.get('/deleteDIR.do', {
-    params: {
-      currentPath,
-      dName
-    }
-  })
-}
 export const deleteFile = function (currentPath, fname) {
   return ajax.get('/deleteFile.do', {
     params: {
-      currentPath,
+      current_path: currentPath,
       fname
     }
   })
