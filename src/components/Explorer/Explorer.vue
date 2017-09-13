@@ -189,7 +189,7 @@ export default {
           return {
             type: file.isDir === 1 ? 'folder' : 'file',
             name: file.fname,
-            path: file.path + file.fname + '/',
+            path: file.path + file.fname,
             size: 0
           }
         })

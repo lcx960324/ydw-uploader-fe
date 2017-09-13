@@ -13,10 +13,20 @@ export const createDir = function (currentPath, name) {
     }
   })
 }
-export const getFileList = function (currentPath, dirName) {
+export const getFileList = function (currentPath) {
+  let path = ''
+  let dirName
+  if (currentPath === '/') {
+    path = '/'
+  } else {
+    const arr = currentPath.split('/')
+    dirName = arr.pop()
+    if (arr.length === 1) path = '/'
+    else path = arr.join('/')
+  }
   return ajax.get('/fileList.do', {
     params: {
-      current_path: currentPath,
+      current_path: path,
       dirName
     }
   })

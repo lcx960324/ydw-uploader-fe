@@ -15,6 +15,9 @@
 <script>
 import { upload } from '@/APIs/explorer'
 export default {
+  created () {
+    this.$route.query.path
+  },
   methods: {
     handleUpload (file) {
       upload(this.$route.query.path, file).then(res => {
