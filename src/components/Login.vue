@@ -6,13 +6,13 @@
     <div class="upl-login-form">
       <Form>
         <Form-item label="用户名">
-          <Input v-model="username" type="text"></Input>
+          <Input v-model="username" type="text" :disabled="loading"></Input>
         </Form-item>
         <Form-item label="密码">
-          <Input v-model="password" type="password"></Input>
+          <Input v-model="password" type="password" :disabled="loading"></Input>
         </Form-item>
       </Form>
-      <Button @click="login" class="upl-login-form-button" type="success" long>登录</Button>
+      <Button @click="login" class="upl-login-form-button" type="success" long :loading="loading">登录</Button>
     </div>
   </div>
 </template>
@@ -22,12 +22,14 @@ import { login } from '@/APIs/user'
 export default {
   data () {
     return {
+      loading: false,
       username: '',
       password: ''
     }
   },
   methods: {
     login () {
+      this.loading = true
       login(this.username, this.password).then(res => {
         if (res.data.error === 0) {
           this.$router.push({
@@ -40,6 +42,8 @@ export default {
       }).catch(err => {
         console.log(err)
         this.$Message.error('登录失败：内部错误')
+      }).then(() => {
+        this.loading = false
       })
     }
   }
