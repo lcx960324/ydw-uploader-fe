@@ -177,8 +177,17 @@ export default {
       this.cleanFolderName()
     },
     delete (file) {
+      this.$Loading.start()
       deleteFile(this.$route.query.path, file).then(res => {
-        console.log(res)
+        if (res.data.error === 0) {
+          this.gotoPath(this.$route.query.path)
+          this.$Loading.finish()
+        } else {
+          this.$Loading.error()
+          throw new Error()
+        }
+      }).catch(err => {
+        console.log(err)
       })
     },
     gotoPath (path) {
