@@ -32,7 +32,9 @@
       title="上传文件"
       class="uploader-modal">
       <span slot="footer"></span>
-      <Uploader></Uploader>
+      <Uploader
+      @uploading="closeUploader"
+      @uploaded="handleUpload"></Uploader>
     </Modal>
     <Modal
       v-model="creator"
@@ -128,6 +130,13 @@ export default {
                 props: {
                   type: 'ghost',
                   disabled: params.row.type !== 'file'
+                },
+                on: {
+                  click: event => {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    console.log('http://httppost.cn:8080/user/download.do?' + params.row.linked)
+                  }
                 }
               }, '复制链接'),
               h('Button', {
@@ -165,6 +174,14 @@ export default {
     upload () {
       this.uploader = true
     },
+    closeUploader () {
+      this.uploader = false
+    },
+    handleUpload (status) {
+      if (status === 'success') {
+        this.gotoPath(this.$route.query.path)
+      }
+    },
     create () {
       this.creator = true
     },
@@ -200,7 +217,8 @@ export default {
             type: file.isDir === 1 ? 'folder' : 'file',
             name: file.fname,
             path: file.path + file.fname,
-            size: file.fileSize
+            size: file.fileSize,
+            linked: file.linked
           }
         })
       }).catch(err => {

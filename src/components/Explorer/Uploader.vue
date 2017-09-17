@@ -20,8 +20,22 @@ export default {
   },
   methods: {
     handleUpload (file) {
+      const loading = this.$Message.loading({
+        content: '上传中，请稍候',
+        duration: 0
+      })
+      this.$emit('uploading')
       upload(this.$route.query.path, file).then(res => {
-        console.log(res)
+        if (res.data.error === 1) throw new Error()
+        else {
+          this.$emit('uploaded', 'success')
+          loading()
+        }
+      }).catch(err => {
+        loading()
+        this.$emit('uploaded', 'fail')
+        console.log(err)
+        this.$Message.error('上传失败')
       })
       return false
     }
