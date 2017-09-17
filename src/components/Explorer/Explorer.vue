@@ -21,6 +21,7 @@
           :show-header="false"
           border
           stripe
+          disabled-hover
         >
         </Table>
       </div>
