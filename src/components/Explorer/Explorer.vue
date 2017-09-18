@@ -135,7 +135,7 @@ export default {
                   click: event => {
                     event.preventDefault()
                     event.stopPropagation()
-                    console.log('http://httppost.cn:8080/user/download.do?' + params.row.linked)
+                    console.log('http://httppost.cn:8080' + params.row.linked)
                   }
                 }
               }, '复制链接'),
