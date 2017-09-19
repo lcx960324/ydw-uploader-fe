@@ -137,7 +137,8 @@ export default {
                     event.stopPropagation()
                     console.log('http://httppost.cn:8080' + params.row.linked)
                   }
-                }
+                },
+                'class': '.download-link-btn'
               }, '复制链接'),
               h('Button', {
                 props: {
