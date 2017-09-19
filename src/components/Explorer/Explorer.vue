@@ -3,13 +3,13 @@
     <div class="control-panel">
       <div class="control-panel-button">
         <ButtonGroup>
-          <Button icon="arrow-return-left">后退</Button>
+          <Button icon="arrow-return-left" :disabled="$route.query.path === '/'" @click="back">后退</Button>
           <Button icon="folder" @click="create">新建文件夹</Button>
           <Button icon="upload" @click="upload">上传文件</Button>
         </ButtonGroup>
       </div>
       <div class="control-panel-input">
-        <Input placeholder="搜索文件..."></Input>
+        <Input v-model="filter" placeholder="搜索文件..."></Input>
       </div>
     </div>
     <div class="file-list">
@@ -17,7 +17,7 @@
       <div class="file-list-content">
         <Table
           :columns="cols"
-          :data="data"
+          :data="fileList"
           :show-header="false"
           border
           stripe
@@ -57,6 +57,7 @@ export default {
       uploader: false,
       creator: false,
       folderName: '',
+      filter: '',
       cols: [
         {
           key: 'type',
@@ -89,7 +90,6 @@ export default {
                   click: event => {
                     event.stopPropagation()
                     event.preventDefault()
-                    console.log(row)
                     this.$router.push({
                       path: '/explorer',
                       query: {
@@ -163,9 +163,19 @@ export default {
       this.gotoPath(this.$route.query.path)
     }
   },
+  computed: {
+    fileList () {
+      if (this.filter === '') return this.data
+      else {
+        return this.data.filter(item => {
+          return item.name.toLowerCase().includes(this.filter)
+        })
+      }
+    }
+  },
   created () {
     this.$Loading.config({
-      color: '#19be6b',
+      color: '#FFFFFF',
       height: 2
     })
     this.gotoPath(this.$route.query.path)
@@ -173,6 +183,16 @@ export default {
   methods: {
     upload () {
       this.uploader = true
+    },
+    back () {
+      const path = this.$route.query.path.split('/')
+      const target = path.slice(0, path.length - 1).join('/')
+      this.$router.push({
+        path: '/explorer',
+        query: {
+          path: target === '' ? '/' : target
+        }
+      })
     },
     closeUploader () {
       this.uploader = false
@@ -213,10 +233,11 @@ export default {
       getFileList(path).then(res => {
         this.$Loading.finish()
         this.data = res.data.map(file => {
+          const path = file.path.endsWith('/') ? file.path + file.fname : file.path + '/' + file.fname
           return {
             type: file.isDir === 1 ? 'folder' : 'file',
             name: file.fname,
-            path: file.path + file.fname,
+            path,
             size: file.fileSize,
             linked: file.linked
           }
