@@ -48,8 +48,10 @@
 </template>
 
 <script>
+import Clipboard from 'clipboard'
 import Uploader from '@/components/Explorer/Uploader'
 import { getFileList, createDir, deleteFile } from '@/APIs/explorer'
+import ExplorerOperation from './ExplorerOperation'
 export default {
   components: { Uploader },
   data () {
@@ -124,35 +126,14 @@ export default {
           width: 180,
           align: 'center',
           render: (h, params) => {
-            return h('ButtonGroup', {
-            }, [
-              h('Button', {
-                props: {
-                  type: 'ghost',
-                  disabled: params.row.type !== 'file'
-                },
-                on: {
-                  click: event => {
-                    event.preventDefault()
-                    event.stopPropagation()
-                    console.log('http://httppost.cn:8080' + params.row.linked)
-                  }
-                },
-                'class': '.download-link-btn'
-              }, '复制链接'),
-              h('Button', {
-                props: {
-                  type: 'ghost'
-                },
-                on: {
-                  click: event => {
-                    event.preventDefault()
-                    event.stopPropagation()
-                    this.delete(params.row.name)
-                  }
-                }
-              }, '删除')
-            ])
+            return h(ExplorerOperation, {
+              props: {
+                data: params.row
+              },
+              on: {
+                delete: this.delete
+              }
+            })
           }
         }
       ],
@@ -180,6 +161,17 @@ export default {
       height: 2
     })
     this.gotoPath(this.$route.query.path)
+    const copy = new Clipboard('.download-link-btn')
+    copy.on('success', (e) => {
+      this.$Message.success('文件路径已复制到您的剪贴板。')
+    })
+    copy.on('error', (e) => {
+      this.$Message.error({
+        duration: 0,
+        content: '复制失败，文件路径：' + e.text,
+        closable: true
+      })
+    })
   },
   methods: {
     upload () {
